@@ -52,5 +52,8 @@ alias ls="ls --color=auto"
 alias ll="ls -la"
 alias resource="source ~/.zshrc"
 
+alias tmns='tmux new-session'
 alias ta='tmux attach'
 alias tl='tmux list-sessions'
+
+alias config='/usr/bin/git --git-dir=$HOME/dotfiles/.git --work-tree=$HOME/dotfiles'

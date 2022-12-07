@@ -40,11 +40,31 @@ zsh-setup()
     AUTOSUGGESTIONS_PATH=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     if [[ ! -d $AUTOSUGGESTIONS_PATH ]]
     then
-        git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+        git clone https://github.com/zsh-users/zsh-autosuggestions $AUTOSUGGESTIONS_PATH
         echo "Installed zsh-autosuggestions"
     else
         echo "Already installed zsh-autosuggestions"
     fi
+}
+
+# Make dirs for neovim
+setup-nvim-dirs()
+{
+    NVIM_META_DIR_PATH=~/.vim
+    NVIM_BACKUP_DIR_PATH=$NVIM_META_DIR_PATH/backup
+    NVIM_SWAP_DIR_PATH=$NVIM_META_DIR_PATH/swap
+    NVIM_UNDO_DIR_PATH=$NVIM_META_DIR_PATH/undo
+    NVIM_DIR_PATHS=($NVIM_META_DIR_PATH $NVIM_BACKUP_DIR_PATH $NVIM_SWAP_DIR_PATH $NVIM_UNDO_DIR_PATH)
+
+    for i in "${NVIM_DIR_PATHS[@]}"
+    do
+        if [[ ! -d $i ]]
+        then
+            mkdir $i
+        else
+            echo "$i already exists"
+        fi
+    done
 }
 
 # Aliases

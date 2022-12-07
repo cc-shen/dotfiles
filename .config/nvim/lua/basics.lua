@@ -1,9 +1,11 @@
 local exec = vim.api.nvim_exec -- execute Vimscript
 local set = vim.opt -- global options
 local cmd = vim.cmd -- execute Vim commands
+local fn = vim.fn -- functions
 local g = vim.g -- global variables
 
 set.termguicolors = true
+cmd [[colorscheme ayu-mirage]]
 
 set.wrap = false
 set.number = true
@@ -57,13 +59,14 @@ set.laststatus = 2
 set.shell = "zsh"
 set.clipboard = 'unnamedplus'
 
+local prefix = fn.expand('~/.vim')
+set.backupdir = { prefix .. '/backup//' }
+set.directory = { prefix .. '/swap//' }
+set.undodir = { prefix .. '/undo//' }
 set.backup = true
 set.writebackup = false
 set.undofile = true
 set.swapfile = true
-set.backupdir = '~/.vim/backup//'
-set.directory = '~/.vim/swap//'
-set.undodir = '~/.vim/undo//'
 
 g.mapleader = ','
 g.maplocalleader = ','

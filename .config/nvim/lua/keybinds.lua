@@ -1,5 +1,4 @@
 -- Leader is ',' see basics.lua
-
 local map = vim.keymap.set
 
 -- Quickly go back to normal mode

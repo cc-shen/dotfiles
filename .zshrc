@@ -40,7 +40,7 @@ zsh-setup()
     AUTOSUGGESTIONS_PATH=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     if [[ ! -d $AUTOSUGGESTIONS_PATH ]]
     then
-        git clone https://github.com/zsh-users/zsh-autosuggestions $AUTOSUGGESTIONS_PATH
+        git clone https://github.com/zsh-users/zsh-autosuggestions.git $AUTOSUGGESTIONS_PATH
         echo "Installed zsh-autosuggestions"
     else
         echo "Already installed zsh-autosuggestions"

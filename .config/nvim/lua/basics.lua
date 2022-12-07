@@ -22,7 +22,7 @@ set.mouse = "a"
 set.mousemodel = "popup"
 
 set.timeoutlen = 500
-set.updatetime = 200
+set.updatetime = 500
 
 set.confirm = true
 set.splitbelow = true
@@ -64,3 +64,6 @@ set.swapfile = true
 set.backupdir = '~/.vim/backup//'
 set.directory = '~/.vim/swap//'
 set.undodir = '~/.vim/undo//'
+
+g.mapleader = ','
+g.maplocalleader = ','

@@ -39,10 +39,13 @@ require('packer').startup(function(use)
         run = ":LeaderfInstallCExtension",
     }
 
+    -- Better wildmenu
+    use 'gelguy/wilder.nvim'
+
     -- Status line
     use {
         'nvim-lualine/lualine.nvim',
-        requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+        requires = { 'kyazdani42/nvim-web-devicons', opt = true },
     }
 
     -- Github Copilot
@@ -50,10 +53,27 @@ require('packer').startup(function(use)
     use 'github/copilot.vim'
 
     -- Add indentation guides even on blank lines
-    use 'lukas-reineke/indent-blankline.nvim'
+    use {
+        'lukas-reineke/indent-blankline.nvim',
+        config = function()
+            require('indent_blankline').setup {
+                filetype_exclude = { 'dashboard' }
+            }
+        end,
+    }
+
+    -- I feel zen
+    use {
+        "folke/zen-mode.nvim",
+        cmd = "ZenMode",
+        config = [[require('config.zen-mode')]],
+    }
+
+    -- Opening dashboard
+    use "glepnir/dashboard-nvim"
 
     -- Themes
-    use 'Shatur/neovim-ayu'
+    use "sainnhe/gruvbox-material"
 
     -- Auto set-up
     if packer_bootstrap then
@@ -66,7 +86,7 @@ end)
 -- make sense to execute the rest of the init.lua.
 --
 -- You'll need to restart nvim, and then it will work.
-if is_bootstrap then
+if packer_bootstrap then
     print '=================================='
     print '    Plugins are being installed'
     print '    Wait until Packer completes,'
@@ -83,20 +103,34 @@ cmd([[
 ]])
 
 -- SECTION: Plugin Configurations
--- [[ Configure ayu ]]
-require('ayu').setup {
-    mirage = true,
-}
+-- [[ Configure gruvbox-material ]]
+g.gruvbox_material_foreground = "material"
+g.gruvbox_material_background = "medium"
+g.gruvbox_material_enable_italic = 1
+g.gruvbox_material_better_performance = 1
 
 -- [[ Configure lualine ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
 require('lualine').setup {
     options = {
-        theme = 'ayu',
         component_separators = '|',
         section_separators = '',
     },
 }
+
+-- [[ Configure wilder.nvim ]]
+local wilder = require('wilder')
+wilder.setup({modes = {':', '/', '?'}})
+wilder.set_option('pipeline', {
+    wilder.debounce(30),
+    wilder.branch(
+        wilder.cmdline_pipeline({ language = 'python' }),
+        wilder.search_pipeline()
+    ),
+})
+wilder.set_option('renderer', wilder.popupmenu_renderer({
+    highlighter = wilder.basic_highlighter(),
+}))
 
 -- [[ Configure Treesitter ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
@@ -173,7 +207,6 @@ g.Lf_ShortcutB = ''
 g.Lf_WorkingDirectoryMode = 'a'
 g.Lf_WindowPosition = 'popup'
 g.Lf_PreviewInPopup = 1
-
 g.Lf_WildIgnore = {
     ['dir'] = {'.git', '__pycache__', '.DS_Store'},
     ['file'] = {
@@ -184,3 +217,42 @@ g.Lf_WildIgnore = {
         '*.mp3', '*.aac'
     },
 }
+
+-- [[ Configure dashboard ]]
+local dashboard = require("dashboard")
+dashboard.custom_header = {
+    "                                                       ",
+    "                                                       ",
+    "                                                       ",
+    " ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗",
+    " ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║",
+    " ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║",
+    " ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║",
+    " ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║",
+    " ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝",
+    "                                                       ",
+    "                                                       ",
+    "                                                       ",
+    "                                                       ",
+}
+dashboard.custom_center = {
+    {
+        icon = '',
+        desc = "Find file                                 ",
+        action = "Leaderf file",
+        shortcut = "<Leader> f f",
+    },
+    {
+        icon = '',
+        desc = "Recently opened files                     ",
+        action = "Leaderf mru --absolute-path",
+        shortcut = "<Leader> f r",
+    },
+    {
+        icon = '',
+        desc = "Find help                                 ",
+        action = "Leaderf help",
+        shortcut = "<Leader> f h",
+    },
+}
+

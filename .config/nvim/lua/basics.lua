@@ -18,7 +18,7 @@ vim.g.loaded_gzip = 1
 vim.g.loaded_tarPlugin = 1
 
 set.termguicolors = true
-cmd [[colorscheme ayu-mirage]]
+cmd [[colorscheme gruvbox-material]]
 
 set.wrap = false
 set.number = true

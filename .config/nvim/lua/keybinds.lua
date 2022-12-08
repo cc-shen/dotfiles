@@ -18,3 +18,9 @@ map('n', '<leader>O', 'O<ESC>')
 map('n', '<leader>[', '<CMD>bp<CR>')
 -- Move to the next buffer
 map('n', '<leader>]', '<CMD>bn<CR>')
+
+-- Leaderf keybinds
+map('n', '<leader>ff', '<CMD>Leaderf file<CR>')
+map('n', '<leader>fh', '<CMD>Leaderf help<CR>')
+map('n', '<leader>fl', '<CMD>Leaderf line<CR>')
+map('n', '<leader>fr', '<CMD>Leaderf mru --absolute-path<CR>')

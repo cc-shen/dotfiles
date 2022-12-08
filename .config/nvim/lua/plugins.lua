@@ -1,5 +1,6 @@
 local fn = vim.fn
 local cmd = vim.cmd
+local g = vim.g
 
 local ensure_packer = function()
     local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -31,11 +32,22 @@ require('packer').startup(function(use)
         after = 'nvim-treesitter',
     }
 
+    -- File searching
+    -- May require installing python3-dev
+    use {
+        'Yggdroot/LeaderF',
+        run = ":LeaderfInstallCExtension",
+    }
+
     -- Status line
     use {
         'nvim-lualine/lualine.nvim',
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
+
+    -- Github Copilot
+    -- Use :Copilot setup afterwards
+    use 'github/copilot.vim'
 
     -- Add indentation guides even on blank lines
     use 'lukas-reineke/indent-blankline.nvim'
@@ -96,54 +108,79 @@ require('nvim-treesitter.configs').setup {
     incremental_selection = {
         enable = true,
         keymaps = {
-        init_selection = '<c-space>',
-        node_incremental = '<c-space>',
-        scope_incremental = '<c-s>',
-        node_decremental = '<c-backspace>',
+            init_selection = '<c-space>',
+            node_incremental = '<c-space>',
+            scope_incremental = '<c-s>',
+            node_decremental = '<c-backspace>',
         },
     },
     textobjects = {
         select = {
-        enable = true,
-        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-        keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
-            ['aa'] = '@parameter.outer',
-            ['ia'] = '@parameter.inner',
-            ['af'] = '@function.outer',
-            ['if'] = '@function.inner',
-            ['ac'] = '@class.outer',
-            ['ic'] = '@class.inner',
-        },
+            enable = true,
+            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+            keymaps = {
+                -- You can use the capture groups defined in textobjects.scm
+                ['aa'] = '@parameter.outer',
+                ['ia'] = '@parameter.inner',
+                ['af'] = '@function.outer',
+                ['if'] = '@function.inner',
+                ['ac'] = '@class.outer',
+                ['ic'] = '@class.inner',
+            },
         },
         move = {
-        enable = true,
-        set_jumps = true,
-        goto_next_start = {
-            [']m'] = '@function.outer',
-            [']]'] = '@class.outer',
-        },
-        goto_next_end = {
-            [']M'] = '@function.outer',
-            [']['] = '@class.outer',
-        },
-        goto_previous_start = {
-            ['[m'] = '@function.outer',
-            ['[['] = '@class.outer',
-        },
-        goto_previous_end = {
-            ['[M'] = '@function.outer',
-            ['[]'] = '@class.outer',
-        },
+            enable = true,
+            set_jumps = true,
+            goto_next_start = {
+                [']m'] = '@function.outer',
+                [']]'] = '@class.outer',
+            },
+            goto_next_end = {
+                [']M'] = '@function.outer',
+                [']['] = '@class.outer',
+            },
+            goto_previous_start = {
+                ['[m'] = '@function.outer',
+                ['[['] = '@class.outer',
+            },
+            goto_previous_end = {
+                ['[M'] = '@function.outer',
+                ['[]'] = '@class.outer',
+            },
         },
         swap = {
-        enable = true,
-        swap_next = {
-            ['<leader>a'] = '@parameter.inner',
+            enable = true,
+            swap_next = {
+                ['<leader>a'] = '@parameter.inner',
+            },
+            swap_previous = {
+                ['<leader>A'] = '@parameter.inner',
+            },
         },
-        swap_previous = {
-            ['<leader>A'] = '@parameter.inner',
-        },
-        },
+    },
+}
+
+-- [[ Configure LeaderF ]]
+-- Inspired from https://github.com/jdhao/nvim-config
+g.Lf_UseCache = 0
+g.Lf_UseVersionControlTool = 0
+g.Lf_IgnoreCurrentBufferName = 1
+g.Lf_DefaultMode = 'FullPath'
+g.Lf_UseVersionControlTool = 0
+g.Lf_ShowHidden = 1
+g.Lf_ShortcutF = ''
+g.Lf_ShortcutB = ''
+g.Lf_WorkingDirectoryMode = 'a'
+g.Lf_WindowPosition = 'popup'
+g.Lf_PreviewInPopup = 1
+
+g.Lf_WildIgnore = {
+    ['dir'] = {'.git', '__pycache__', '.DS_Store'},
+    ['file'] = {
+        '*.exe', '*.dll', '*.so', '*.o', '*.pyc', '*.jpg', '*.png',
+        '*.gif', '*.svg', '*.ico', '*.db', '*.tgz', '*.tar.gz', '*.gz',
+        '*.zip', '*.bin', '*.pptx', '*.xlsx', '*.docx', '*.pdf', '*.tmp',
+        '*.wmv', '*.mkv', '*.mp4', '*.rmvb', '*.ttf', '*.ttc', '*.otf',
+        '*.mp3', '*.aac'
     },
 }

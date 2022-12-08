@@ -62,13 +62,6 @@ require('packer').startup(function(use)
         end,
     }
 
-    -- I feel zen
-    use {
-        "folke/zen-mode.nvim",
-        cmd = "ZenMode",
-        config = [[require('config.zen-mode')]],
-    }
-
     -- Opening dashboard
     use "glepnir/dashboard-nvim"
 

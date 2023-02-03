@@ -34,6 +34,7 @@ require('packer').startup(function(use)
 
     -- File searching
     -- May require installing python3-dev
+    -- Sometimes solveable by running `pip3 install --user --upgrade neovim` and then restart it
     use {
         'Yggdroot/LeaderF',
         run = ":LeaderfInstallCExtension",

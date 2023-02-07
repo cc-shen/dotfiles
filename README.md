@@ -17,3 +17,9 @@ ln -nfs ~/dotfiles/.config/nvim ~/.config
 
 ln -nfs ~/dotfiles/.tmux.conf ~/.tmux.conf
 ```
+
+Locating command history:
+
+```bash
+echo $HISTFILE
+```

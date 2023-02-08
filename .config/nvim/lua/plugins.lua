@@ -32,12 +32,33 @@ require('packer').startup(function(use)
         after = 'nvim-treesitter',
     }
 
+    -- LSP Configuration & Plguins
+    use {
+        'neovim/nvim-lspconfig',
+        requires = {
+            -- Automatically install LSPs to stdpath for neovim
+            'williamboman/mason.nvim',
+            'williamboman/mason-lspconfig.nvim',
+
+            -- Useful status updates for LSP
+            'j-hui/fidget.nvim',
+
+            -- Additional lua configuration, makes nvim stuff amazing
+            'folke/neodev.nvim',
+        },
+    }
+
+    use { -- Autocompletion
+        'hrsh7th/nvim-cmp',
+        requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+    }
+
     -- File searching
     -- May require installing python3-dev
     -- Sometimes solveable by running `pip3 install --user --upgrade neovim` and then restart it
     use {
         'Yggdroot/LeaderF',
-        run = ":LeaderfInstallCExtension",
+        run = ':LeaderfInstallCExtension',
     }
 
     -- Better wildmenu
@@ -60,10 +81,23 @@ require('packer').startup(function(use)
     }
 
     -- Opening dashboard
-    use "glepnir/dashboard-nvim"
+    use 'nvim-tree/nvim-web-devicons'
+    use {
+        'glepnir/dashboard-nvim',
+        event = 'VimEnter',
+        config = function()
+            require('dashboard').setup {
+                theme = 'hyper'
+            }
+        end,
+        requires = { 'nvim-tree/nvim-web-devicons' }
+    }
+
+    -- Git
+    use 'lewis6991/gitsigns.nvim'
 
     -- Themes
-    use "sainnhe/gruvbox-material"
+    use 'sainnhe/gruvbox-material'
 
     -- Auto set-up
     if packer_bootstrap then
@@ -88,14 +122,14 @@ end
 cmd([[
     augroup packer_user_config
         autocmd!
-        autocmd BufWritePost plugins.lua source <afile> | PackerSync
+        autocmd BufWritePost plugins.lua source <afile> | silent! LspStop | silent! LspStart | PackerCompile
     augroup end
 ]])
 
 -- SECTION: Plugin Configurations
 -- [[ Configure gruvbox-material ]]
-g.gruvbox_material_foreground = "material"
-g.gruvbox_material_background = "medium"
+g.gruvbox_material_foreground = 'material'
+g.gruvbox_material_background = 'medium'
 g.gruvbox_material_enable_italic = 1
 g.gruvbox_material_better_performance = 1
 
@@ -125,7 +159,27 @@ wilder.set_option('renderer', wilder.popupmenu_renderer({
 -- [[ Configure Treesitter ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
 require('nvim-treesitter.configs').setup {
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'typescript', 'help' },
+    ensure_installed = { 
+        'clojure',
+        'lua',
+        'python',
+        'javascript',
+        'typescript',
+        'help',
+        'vim',
+        'yaml',
+        'regex',
+        'scss',
+        'php',
+        'graphql',
+        'css',
+        'tsx',
+        'make',
+        'json',
+        'http',
+        'html',
+        'dockerfile'
+    },
 
     highlight = { enable = true },
     indent = { enable = true },
@@ -208,41 +262,15 @@ g.Lf_WildIgnore = {
     },
 }
 
--- [[ Configure dashboard ]]
-local dashboard = require("dashboard")
-dashboard.custom_header = {
-    "                                                       ",
-    "                                                       ",
-    "                                                       ",
-    " ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗",
-    " ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║",
-    " ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║",
-    " ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║",
-    " ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║",
-    " ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝",
-    "                                                       ",
-    "                                                       ",
-    "                                                       ",
-    "                                                       ",
-}
-dashboard.custom_center = {
-    {
-        icon = '',
-        desc = "Find file                                 ",
-        action = "Leaderf file",
-        shortcut = "<Leader> f f",
-    },
-    {
-        icon = '',
-        desc = "Recently opened files                     ",
-        action = "Leaderf mru --absolute-path",
-        shortcut = "<Leader> f r",
-    },
-    {
-        icon = '',
-        desc = "Find help                                 ",
-        action = "Leaderf help",
-        shortcut = "<Leader> f h",
+-- [[ Configure Gitsigns ]]
+-- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
+require('gitsigns').setup {
+    signs = {
+        add = { text = '+' },
+        change = { text = '~' },
+        delete = { text = '_' },
+        topdelete = { text = '‾' },
+        changedelete = { text = '~' },
     },
 }
 

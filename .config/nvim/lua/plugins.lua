@@ -49,10 +49,6 @@ require('packer').startup(function(use)
         requires = { 'kyazdani42/nvim-web-devicons', opt = true },
     }
 
-    -- Github Copilot
-    -- Use :Copilot setup afterwards
-    use 'github/copilot.vim'
-
     -- Add indentation guides even on blank lines
     use {
         'lukas-reineke/indent-blankline.nvim',

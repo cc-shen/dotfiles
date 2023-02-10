@@ -48,17 +48,24 @@ require('packer').startup(function(use)
         },
     }
 
-    use { -- Autocompletion
+    -- Autocompletion
+    use {
         'hrsh7th/nvim-cmp',
         requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
     }
 
-    -- File searching
-    -- May require installing python3-dev
-    -- Sometimes solveable by running `pip3 install --user --upgrade neovim` and then restart it
+    -- Fuzzy Finder (files, lsp, etc)
     use {
-        'Yggdroot/LeaderF',
-        run = ':LeaderfInstallCExtension',
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        requires = { 'nvim-lua/plenary.nvim' }
+    }
+
+    -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
+    use {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        run = 'make',
+        cond = fn.executable 'make' == 1
     }
 
     -- Better wildmenu
@@ -156,29 +163,28 @@ wilder.set_option('renderer', wilder.popupmenu_renderer({
     highlighter = wilder.basic_highlighter(),
 }))
 
+-- [[ Configure Telescope ]]
+-- See `:help telescope` and `:help telescope.setup()`
+require('telescope').setup {
+    defaults = {
+        mappings = {
+            i = {
+                ['<C-u>'] = false,
+                ['<C-d>'] = false,
+            },
+        },
+    },
+}
+
 -- [[ Configure Treesitter ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
 require('nvim-treesitter.configs').setup {
-    ensure_installed = { 
-        'clojure',
-        'lua',
-        'python',
-        'javascript',
-        'typescript',
-        'help',
-        'vim',
-        'yaml',
-        'regex',
-        'scss',
-        'php',
-        'graphql',
-        'css',
-        'tsx',
-        'make',
-        'json',
-        'http',
-        'html',
-        'dockerfile'
+    ensure_installed = {
+        'clojure', 'lua', 'python', 'javascript', 'typescript', 'tsx', 'php',
+        'help', 'vim', 'regex',
+        'yaml', 'css', 'scss', 'json', 'jsonc',
+        'graphql', 'http', 'html',
+        'make', 'dockerfile'
     },
 
     highlight = { enable = true },
@@ -238,30 +244,6 @@ require('nvim-treesitter.configs').setup {
     },
 }
 
--- [[ Configure LeaderF ]]
--- Inspired from https://github.com/jdhao/nvim-config
-g.Lf_UseCache = 0
-g.Lf_UseVersionControlTool = 0
-g.Lf_IgnoreCurrentBufferName = 1
-g.Lf_DefaultMode = 'FullPath'
-g.Lf_UseVersionControlTool = 0
-g.Lf_ShowHidden = 1
-g.Lf_ShortcutF = ''
-g.Lf_ShortcutB = ''
-g.Lf_WorkingDirectoryMode = 'a'
-g.Lf_WindowPosition = 'popup'
-g.Lf_PreviewInPopup = 1
-g.Lf_WildIgnore = {
-    ['dir'] = {'.git', '__pycache__', '.DS_Store'},
-    ['file'] = {
-        '*.exe', '*.dll', '*.so', '*.o', '*.pyc', '*.jpg', '*.png',
-        '*.gif', '*.svg', '*.ico', '*.db', '*.tgz', '*.tar.gz', '*.gz',
-        '*.zip', '*.bin', '*.pptx', '*.xlsx', '*.docx', '*.pdf', '*.tmp',
-        '*.wmv', '*.mkv', '*.mp4', '*.rmvb', '*.ttf', '*.ttc', '*.otf',
-        '*.mp3', '*.aac'
-    },
-}
-
 -- [[ Configure Gitsigns ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
 require('gitsigns').setup {
@@ -274,3 +256,58 @@ require('gitsigns').setup {
     },
 }
 
+-- [[ Configure LSP and more ]]
+-- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
+local servers = {
+    -- pyright = {},
+    -- yamlls = {},
+    sumneko_lua = {
+        Lua = {
+            workspace = { checkThirdParty = false },
+            telemetry = { enable = false },
+        },
+    },
+}
+-- Setup neovim lua configuration
+require('neodev').setup()
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+require('mason').setup()
+
+local mason_lspconfig = require 'mason-lspconfig'
+mason_lspconfig.setup {
+    ensure_installed = vim.tbl_keys(servers),
+}
+
+--  This function gets run when an LSP connects to a particular buffer.
+local on_attach = function(_, bufnr)
+    local nmap = function(keys, func, desc)
+        if desc then
+            desc = 'LSP: ' .. desc
+        end
+
+        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    end
+
+    -- See `:help K` for why this keymap
+    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+end
+
+mason_lspconfig.setup_handlers {
+    function(server_name)
+        require('lspconfig')[server_name].setup {
+            capabilities = capabilities,
+            on_attach = on_attach,
+            settings = servers[server_name],
+        }
+    end,
+}
+-- Turn on lsp status information
+require('fidget').setup()
+
+-- nvim-cmp setup
+local cmp = require 'cmp'
+local luasnip = require 'luasnip'

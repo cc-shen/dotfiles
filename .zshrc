@@ -19,6 +19,18 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+cprint() {
+    if [[ $- == *i* ]]; then
+        echo $*
+    fi
+}
+
+cgit() {
+    if [[ $- == *i* ]]; then
+        git $*
+    fi
+}
+
 # Make zsh git auto completion faster
 __git_files()
 {
@@ -70,6 +82,16 @@ setup-nvim-dirs()
         fi
     done
 }
+
+# tmux plugins
+tpm_folder=~/.tmux/plugins/tpm
+if [[ ! -d $tpm_folder ]]; then
+    cprint "Tmux Plugin Manager not found. Installing it now..."
+    mkdir -p $tpm_folder
+    cgit clone https://github.com/tmux-plugins/tpm $tpm_folder > /dev/null 2>&1
+else
+    cgit -C $tpm_folder pull > /dev/null 2>&1
+fi
 
 # Aliases
 alias ls="ls --color=auto"

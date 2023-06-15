@@ -41,7 +41,8 @@ require('packer').startup(function(use)
             'williamboman/mason-lspconfig.nvim',
 
             -- Useful status updates for LSP
-            'j-hui/fidget.nvim',
+            -- `opts = {}` is the same as calling `require('fidget').setup({})`
+            { 'j-hui/fidget.nvim', opts = {} },
 
             -- Additional lua configuration, makes nvim stuff amazing
             'folke/neodev.nvim',
@@ -261,13 +262,14 @@ require('gitsigns').setup {
 local servers = {
     -- pyright = {},
     -- yamlls = {},
-    sumneko_lua = {
+    lua_ls = {
         Lua = {
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
         },
     },
 }
+
 -- Setup neovim lua configuration
 require('neodev').setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -322,8 +324,6 @@ mason_lspconfig.setup_handlers {
         }
     end,
 }
--- Turn on lsp status information
-require('fidget').setup()
 
 -- [[ Configure nvim-cmp ]]
 local cmp = require 'cmp'
@@ -337,8 +337,11 @@ cmp.setup {
     mapping = cmp.mapping.preset.insert {
         ['<C-d>'] = cmp.mapping.scroll_docs(-4),
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<CR>'] = cmp.mapping.confirm { select = true },
+        ['<C-Space>'] = cmp.mapping.complete {},
+        ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+        },
         ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_next_item()
@@ -351,7 +354,7 @@ cmp.setup {
         ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
+            elseif luasnip.locally_jumpable(-1) then
                 luasnip.jump(-1)
             else
                 fallback()

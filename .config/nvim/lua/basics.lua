@@ -36,8 +36,8 @@ set.expandtab = true
 set.mouse = "a"
 set.mousemodel = "popup"
 
-set.timeoutlen = 500
-set.updatetime = 500
+set.timeoutlen = 1000
+set.updatetime = 300
 
 set.confirm = true
 set.splitbelow = true
@@ -83,3 +83,6 @@ set.swapfile = true
 
 g.mapleader = ','
 g.maplocalleader = ','
+
+set.cmdheight = 2
+set.conceallevel = 0

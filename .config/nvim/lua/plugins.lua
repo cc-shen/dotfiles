@@ -61,11 +61,10 @@ require('packer').startup(function(use)
         requires = { 'nvim-lua/plenary.nvim' }
     }
 
-    -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
+    -- Fuzzy Finder Algorithm which requires local dependencies to be built
     use {
         'nvim-telescope/telescope-fzf-native.nvim',
         run = 'make',
-        cond = fn.executable 'make' == 1
     }
 
     -- Better wildmenu
@@ -175,7 +174,8 @@ wilder.set_option('renderer', wilder.popupmenu_renderer({
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
-require('telescope').setup {
+local telescope = require('telescope')
+telescope.setup({
     defaults = {
         mappings = {
             i = {
@@ -184,7 +184,8 @@ require('telescope').setup {
             },
         },
     },
-}
+})
+telescope.load_extension('fzf')
 
 -- [[ Configure Treesitter ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua

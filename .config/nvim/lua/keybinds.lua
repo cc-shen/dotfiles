@@ -10,14 +10,14 @@ map('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 map('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Insert blank line below
-map('n', '<leader>o', 'o<ESC>')
+map('n', '<leader>o', 'o<ESC>', { desc = '[o] Insert blank line below' })
 -- Insert blank line below
-map('n', '<leader>O', 'O<ESC>')
+map('n', '<leader>O', 'O<ESC>', { desc = '[O] Insert blank line below' })
 
 -- Move to the previous buffer
-map('n', '<leader>[', '<CMD>bp<CR>')
+map('n', '<leader>[', '<CMD>bp<CR>', { desc = '[bp] Move to previous buffer' })
 -- Move to the next buffer
-map('n', '<leader>]', '<CMD>bn<CR>')
+map('n', '<leader>]', '<CMD>bn<CR>', { desc = '[bn] Move to next buffer' })
 
 -- Telescope mappings
 -- See `:help telescope.builtin`

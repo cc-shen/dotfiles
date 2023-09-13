@@ -13,12 +13,12 @@ g.loaded_2html_plugin = 1 -- no tohtml.vim
 
 -- Do not load zipPlugin.vim, gzip.vim and tarPlugin.vim (all these plugins are
 -- related to checking files inside compressed files)
-vim.g.loaded_zipPlugin = 1
-vim.g.loaded_gzip = 1
-vim.g.loaded_tarPlugin = 1
+g.loaded_zipPlugin = 1
+g.loaded_gzip = 1
+g.loaded_tarPlugin = 1
 
 set.termguicolors = true
-cmd [[colorscheme gruvbox-material]]
+cmd[[colorscheme dracula]]
 
 set.wrap = false
 set.number = true

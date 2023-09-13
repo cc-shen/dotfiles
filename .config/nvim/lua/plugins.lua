@@ -32,28 +32,6 @@ require('packer').startup(function(use)
         after = 'nvim-treesitter',
     }
 
-    -- LSP Configuration & Plguins
-    use {
-        'neovim/nvim-lspconfig',
-        requires = {
-            -- Automatically install LSPs to stdpath for neovim
-            'williamboman/mason.nvim',
-            'williamboman/mason-lspconfig.nvim',
-
-            -- Useful status updates for LSP
-            { 'j-hui/fidget.nvim', tag = 'legacy' },
-
-            -- Additional lua configuration, makes nvim stuff amazing
-            'folke/neodev.nvim',
-        },
-    }
-
-    -- Autocompletion
-    use {
-        'hrsh7th/nvim-cmp',
-        requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-    }
-
     -- Fuzzy Finder (files, lsp, etc)
     use {
         'nvim-telescope/telescope.nvim',
@@ -77,27 +55,7 @@ require('packer').startup(function(use)
     }
 
     -- Add indentation guides even on blank lines
-    use {
-        'lukas-reineke/indent-blankline.nvim',
-        config = function()
-            require('indent_blankline').setup {
-                filetype_exclude = { 'dashboard' }
-            }
-        end,
-    }
-
-    -- Opening dashboard
-    use 'nvim-tree/nvim-web-devicons'
-    use {
-        'glepnir/dashboard-nvim',
-        event = 'VimEnter',
-        config = function()
-            require('dashboard').setup {
-                theme = 'hyper'
-            }
-        end,
-        requires = { 'nvim-tree/nvim-web-devicons' }
-    }
+    use "lukas-reineke/indent-blankline.nvim"
 
     -- Git
     use 'lewis6991/gitsigns.nvim'
@@ -113,7 +71,7 @@ require('packer').startup(function(use)
     }
 
     -- Themes
-    use 'sainnhe/gruvbox-material'
+    use 'Mofiqul/dracula.nvim'
 
     -- Auto set-up
     if packer_bootstrap then
@@ -138,25 +96,31 @@ end
 cmd([[
     augroup packer_user_config
         autocmd!
-        autocmd BufWritePost plugins.lua source <afile> | silent! LspStop | silent! LspStart | PackerCompile
+        autocmd BufWritePost plugins.lua source <afile> | silent! LspStop | silent! LspStart | PackerSync
     augroup end
 ]])
 
 -- SECTION: Plugin Configurations
--- [[ Configure gruvbox-material ]]
-g.gruvbox_material_foreground = 'material'
-g.gruvbox_material_background = 'medium'
-g.gruvbox_material_enable_italic = 1
-g.gruvbox_material_better_performance = 1
+-- [[ Configure dracula.nvim ]]
+require('dracula').setup({
+    show_end_of_buffer = true,
+    --italic_comment = true,
+})
 
 -- [[ Configure lualine ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
 require('lualine').setup {
     options = {
+	theme = 'dracula-nvim',
         component_separators = '|',
         section_separators = '',
     },
 }
+
+-- [[ Configure indent-blankline.nvim ]]
+require("indent_blankline").setup({
+    show_current_context = true,
+})
 
 -- [[ Configure wilder.nvim ]]
 local wilder = require('wilder')
@@ -197,7 +161,6 @@ require('nvim-treesitter.configs').setup {
         'graphql', 'http', 'html',
         'make', 'dockerfile'
     },
-
     highlight = { enable = true },
     indent = { enable = true },
     incremental_selection = {
@@ -267,110 +230,3 @@ require('gitsigns').setup {
     },
 }
 
--- [[ Configure LSP and more ]]
--- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
-local servers = {
-    -- pyright = {},
-    -- yamlls = {},
-    lua_ls = {
-        Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
-        },
-    },
-}
--- Setup neovim lua configuration
-require('neodev').setup()
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
-require('mason').setup()
-local mason_lspconfig = require 'mason-lspconfig'
-mason_lspconfig.setup {
-    ensure_installed = vim.tbl_keys(servers),
-}
-
--- This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
-    local nmap = function(keys, func, desc)
-        if desc then
-            desc = 'LSP: ' .. desc
-        end
-
-        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-    end
-
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
-    -- See `:help K` for why this keymap
-    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-
-    -- Lesser used LSP functionality
-    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-    nmap(
-        '<leader>wl',
-        function()
-            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-        end,
-        '[W]orkspace [L]ist Folders'
-    )
-end
-
-mason_lspconfig.setup_handlers {
-    function(server_name)
-        require('lspconfig')[server_name].setup {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = servers[server_name],
-        }
-    end,
-}
--- Turn on lsp status information
-require('fidget').setup()
-
--- [[ Configure nvim-cmp ]]
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
-cmp.setup {
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert {
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<CR>'] = cmp.mapping.confirm { select = true },
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-    },
-    sources = {
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' },
-    },
-}

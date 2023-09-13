@@ -54,6 +54,14 @@ require('packer').startup(function(use)
         requires = { 'kyazdani42/nvim-web-devicons', opt = true },
     }
 
+    -- coc.nvim
+    -- If need node, `curl -sL install-node.vercel.app/lts | bash`
+    -- Check health via `:checkhealth`
+    use {
+        'neoclide/coc.nvim',
+        branch = 'release',
+    }
+
     -- Add indentation guides even on blank lines
     use "lukas-reineke/indent-blankline.nvim"
 

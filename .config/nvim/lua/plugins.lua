@@ -1,6 +1,5 @@
 local fn = vim.fn
 local cmd = vim.cmd
-local g = vim.g
 
 local ensure_packer = function()
     local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -54,9 +53,6 @@ require('packer').startup(function(use)
         run = 'make',
     }
 
-    -- Better wildmenu
-    use 'gelguy/wilder.nvim'
-
     -- Status line
     use {
         'nvim-lualine/lualine.nvim',
@@ -64,6 +60,20 @@ require('packer').startup(function(use)
     }
 
     -- LSP
+    use {
+        'williamboman/mason.nvim',
+        'williamboman/mason-lspconfig.nvim',
+        'neovim/nvim-lspconfig',
+    }
+
+    -- Autocomplete
+    use {
+        'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-path',
+        'hrsh7th/cmp-cmdline',
+        'hrsh7th/nvim-cmp',
+    }
 
     -- Add indentation guides even on blank lines
     use 'lukas-reineke/indent-blankline.nvim'
@@ -123,6 +133,25 @@ require('catppuccin').setup({
             enabled = true,
         },
         which_key = false,
+        mason = false,
+        native_lsp = {
+            enabled = true,
+            virtual_text = {
+                errors = { "italic" },
+                hints = { "italic" },
+                warnings = { "italic" },
+                information = { "italic" },
+            },
+            underlines = {
+                errors = { "underline" },
+                hints = { "underline" },
+                warnings = { "underline" },
+                information = { "underline" },
+            },
+            inlay_hints = {
+                background = true,
+            },
+        },
     },
 })
 
@@ -168,20 +197,6 @@ require('lualine').setup({
 require('indent_blankline').setup({
     show_current_context = true,
 })
-
--- [[ Configure wilder.nvim ]]
-local wilder = require('wilder')
-wilder.setup({modes = {':', '/', '?'}})
-wilder.set_option('pipeline', {
-    wilder.debounce(30),
-    wilder.branch(
-        wilder.cmdline_pipeline({ language = 'python' }),
-        wilder.search_pipeline()
-    ),
-})
-wilder.set_option('renderer', wilder.popupmenu_renderer({
-    highlighter = wilder.basic_highlighter(),
-}))
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -277,3 +292,81 @@ require('gitsigns').setup {
     },
 }
 
+-- [[ Configure nvim-cmp ]]
+local cmp = require('cmp')
+
+cmp.setup({
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.abort(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item
+    }),
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+    }, {
+        { name = 'buffer' },
+    })
+})
+
+-- Set configuration for specific filetype.
+cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+        { name = 'git' },
+    }, {
+        { name = 'buffer' },
+    })
+})
+
+-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+        { name = 'buffer' }
+    }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+        { name = 'path' }
+    }, {
+        { name = 'cmdline' }
+    })
+})
+
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+-- [[ LSP ]]
+-- Here we go!
+require('mason').setup()
+require('mason-lspconfig').setup()
+require('mason-lspconfig').setup_handlers({
+    function (server_name)
+        require('lspconfig')[server_name].setup({
+            capabilities = capabilities,
+        })
+    end,
+    ['lua_ls'] = function ()
+        require('lspconfig').lua_ls.setup({
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { 'vim' }
+                    },
+                    telemetry = {
+                        enable = false,
+                    },
+                }
+            },
+            capabilities = capabilities,
+        })
+    end,
+})

@@ -19,11 +19,20 @@ require('packer').startup(function(use)
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
 
+    -- File tree
+    use {
+        'nvim-tree/nvim-tree.lua',
+        requires = {
+            'nvim-tree/nvim-web-devicons',
+        },
+    }
+
     -- Highlight, edit, and navigate code
     use {
         'nvim-treesitter/nvim-treesitter',
         run = function()
-            pcall(require('nvim-treesitter.install').update { with_sync = true })
+            local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+            ts_update()
         end,
     }
     -- Additional text objects via treesitter
@@ -54,32 +63,22 @@ require('packer').startup(function(use)
         requires = { 'kyazdani42/nvim-web-devicons', opt = true },
     }
 
-    -- coc.nvim
-    -- If need node, `curl -sL install-node.vercel.app/lts | bash`
-    -- Check health via `:checkhealth`
-    use {
-        'neoclide/coc.nvim',
-        branch = 'release',
-    }
+    -- LSP
 
     -- Add indentation guides even on blank lines
-    use "lukas-reineke/indent-blankline.nvim"
+    use 'lukas-reineke/indent-blankline.nvim'
 
     -- Git
     use 'lewis6991/gitsigns.nvim'
 
     -- WhichKey because I can't remember anything
-    use {
-        "folke/which-key.nvim",
-        config = function()
-            vim.o.timeout = true
-            vim.o.timeoutlen = 500
-            require("which-key").setup {}
-        end
-    }
+    use 'folke/which-key.nvim'
 
     -- Themes
-    use 'Mofiqul/dracula.nvim'
+    use {
+        'catppuccin/nvim',
+        as = 'catppuccin',
+    }
 
     -- Auto set-up
     if packer_bootstrap then
@@ -109,24 +108,64 @@ cmd([[
 ]])
 
 -- SECTION: Plugin Configurations
--- [[ Configure dracula.nvim ]]
-require('dracula').setup({
-    show_end_of_buffer = true,
-    --italic_comment = true,
+-- [[ Configure catppuccin ]]
+require('catppuccin').setup({
+    integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        indent_blankline = {
+            enabled = true,
+            colored_indent_levels = false,
+        },
+        telescope = {
+            enabled = true,
+        },
+        which_key = false,
+    },
+})
+
+-- [[ Configure which-key ]]
+require('which-key').setup()
+
+-- [[ Configure nvim-tree ]]
+require('nvim-tree').setup({
+    disable_netrw = true,
+    sync_root_with_cwd = true,
+    update_focused_file = {
+        enable = true,
+        update_root = false,
+    },
+    renderer = {
+        root_folder_label = false,
+        icons = {
+            show = {
+                git = false,
+            },
+        },
+    },
+    filters = {
+        dotfiles = false,
+    },
 })
 
 -- [[ Configure lualine ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
-require('lualine').setup {
+require('lualine').setup({
     options = {
-	theme = 'dracula-nvim',
+        theme = 'catppuccin',
         component_separators = '|',
         section_separators = '',
+        disabled_filetypes = {
+            'packer',
+            'NvimTree',
+        },
     },
-}
+})
 
 -- [[ Configure indent-blankline.nvim ]]
-require("indent_blankline").setup({
+require('indent_blankline').setup({
     show_current_context = true,
 })
 
@@ -159,7 +198,7 @@ telescope.setup({
 })
 telescope.load_extension('fzf')
 
--- [[ Configure Treesitter ]]
+-- [[ Configure treesitter ]]
 -- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
 require('nvim-treesitter.configs').setup {
     ensure_installed = {

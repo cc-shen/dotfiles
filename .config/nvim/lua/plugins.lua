@@ -68,11 +68,13 @@ require('packer').startup(function(use)
 
     -- Autocomplete
     use {
-        'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
         'hrsh7th/cmp-buffer',
         'hrsh7th/cmp-path',
         'hrsh7th/cmp-cmdline',
-        'hrsh7th/nvim-cmp',
+        'hrsh7th/nvim-cmp', -- Autocompletion plugin
+        'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
+        'L3MON4D3/LuaSnip', -- Snippets plugin
     }
 
     -- Add indentation guides even on blank lines
@@ -280,22 +282,45 @@ require('nvim-treesitter.configs').setup {
     },
 }
 
--- [[ Configure Gitsigns ]]
--- Inspired from https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
-require('gitsigns').setup {
-    signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-    },
-}
+-- [[ LSP ]]
+-- Here we go!
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+require('mason').setup()
+require('mason-lspconfig').setup()
+require('mason-lspconfig').setup_handlers({
+    function (server_name)
+        require('lspconfig')[server_name].setup({
+            capabilities = capabilities,
+        })
+    end,
+    ['lua_ls'] = function ()
+        require('lspconfig').lua_ls.setup({
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { 'vim' }
+                    },
+                    telemetry = {
+                        enable = false,
+                    },
+                }
+            },
+            capabilities = capabilities,
+        })
+    end,
+})
 
 -- [[ Configure nvim-cmp ]]
+local luasnip = require('luasnip')
 local cmp = require('cmp')
 
 cmp.setup({
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
     window = {
         completion = cmp.config.window.bordered(),
         documentation = cmp.config.window.bordered(),
@@ -305,12 +330,30 @@ cmp.setup({
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item
+        ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
     }),
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-    }, {
         { name = 'buffer' },
+        { name = 'luasnip' },
     })
 })
 
@@ -341,32 +384,3 @@ cmp.setup.cmdline(':', {
     })
 })
 
--- Set up lspconfig.
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
--- [[ LSP ]]
--- Here we go!
-require('mason').setup()
-require('mason-lspconfig').setup()
-require('mason-lspconfig').setup_handlers({
-    function (server_name)
-        require('lspconfig')[server_name].setup({
-            capabilities = capabilities,
-        })
-    end,
-    ['lua_ls'] = function ()
-        require('lspconfig').lua_ls.setup({
-            settings = {
-                Lua = {
-                    diagnostics = {
-                        globals = { 'vim' }
-                    },
-                    telemetry = {
-                        enable = false,
-                    },
-                }
-            },
-            capabilities = capabilities,
-        })
-    end,
-})

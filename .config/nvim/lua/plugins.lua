@@ -220,7 +220,7 @@ telescope.load_extension('fzf')
 require('nvim-treesitter.configs').setup {
     ensure_installed = {
         'clojure', 'lua', 'python', 'javascript', 'typescript', 'tsx', 'php',
-        'help', 'vim', 'regex',
+        'vimdoc', 'vim', 'regex',
         'yaml', 'css', 'scss', 'json', 'jsonc',
         'graphql', 'http', 'html',
         'make', 'dockerfile'

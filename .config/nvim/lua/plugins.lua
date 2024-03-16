@@ -78,7 +78,7 @@ require('packer').startup(function(use)
     }
 
     -- Add indentation guides even on blank lines
-    use 'lukas-reineke/indent-blankline.nvim'
+    use { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} }
 
     -- Git
     use 'lewis6991/gitsigns.nvim'
@@ -196,9 +196,7 @@ require('lualine').setup({
 })
 
 -- [[ Configure indent-blankline.nvim ]]
-require('indent_blankline').setup({
-    show_current_context = true,
-})
+require('ibl').setup()
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`

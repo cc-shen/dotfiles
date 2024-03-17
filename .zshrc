@@ -4,6 +4,9 @@ fi
 
 export ZSH="$HOME/.oh-my-zsh"
 
+export VISUAL=vim
+export EDITOR="$VISUAL"
+
 ZSH_THEME="robbyrussell"
 HYPHEN_INSENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
@@ -106,3 +109,6 @@ alias ta='tmux attach'
 alias tl='tmux list-sessions'
 
 alias config='/usr/bin/git --git-dir=$HOME/dotfiles/.git --work-tree=$HOME/dotfiles'
+
+echo "Available functions: setup-zsh, setup-tpm, setup-nvim-dirs"
+

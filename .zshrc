@@ -18,6 +18,7 @@ plugins=(
     tmux
     zsh-syntax-highlighting
     zsh-autosuggestions
+    you-should-use
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -63,6 +64,17 @@ setup-zsh()
         echo "Installed zsh-autosuggestions"
     else
         echo "Already installed zsh-autosuggestions"
+    fi
+
+    # you-should-use
+    echo "Installing you-should-use"
+    YOUSHOULDUSE_PATH=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/you-should-use
+    if [[ ! -d $YOUSHOULDUSE_PATH ]]
+    then
+        git clone https://github.com/MichaelAquilina/zsh-you-should-use.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/you-should-use
+        echo "Installed you-should-use"
+    else
+        echo "Already installed you-should-use"
     fi
 }
 
@@ -111,4 +123,3 @@ alias tl='tmux list-sessions'
 alias config='/usr/bin/git --git-dir=$HOME/dotfiles/.git --work-tree=$HOME/dotfiles'
 
 echo "Available functions: setup-zsh, setup-tpm, setup-nvim-dirs"
-

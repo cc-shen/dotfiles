@@ -13,7 +13,7 @@ Linking from dotfiles:
 ```bash
 ln -nfs ~/dotfiles/.zshrc ~/.zshrc
 
-ln -nfs ~/dotfiles/.config/nvim ~/.config
+ln -nfs ~/dotfiles/nvim ~/.config/nvim
 
 ln -nfs ~/dotfiles/.tmux.conf ~/.tmux.conf
 ```

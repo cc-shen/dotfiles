@@ -1,6 +1,6 @@
 ## oh-my-zsh
 
-Tired of looking up https://ohmyz.sh/#install everytime, so the command is just
+Tired of looking up <https://ohmyz.sh/#install> everytime, so the command is just
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -23,3 +23,7 @@ Locating command history:
 ```bash
 echo $HISTFILE
 ```
+
+tmux:
+
+- May need to run `<prefix> I` to install, `<prefix> U` to update

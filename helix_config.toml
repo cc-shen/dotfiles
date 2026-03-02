@@ -1,0 +1,42 @@
+theme = "catppuccin_mocha"
+
+[editor]
+line-number = "relative"
+clipboard-provider = "termcode"
+cursorline = true
+auto-format = false
+color-modes = true
+default-line-ending = "lf"
+trim-final-newlines = true
+trim-trailing-whitespace = true
+popup-border = "all"
+end-of-line-diagnostics = "hint"
+
+[editor.statusline]
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.whitespace.render]
+space = "none"
+tab = "all"
+nbsp = "none"
+nnbsp = "none"
+newline = "none"
+
+[editor.indent-guides]
+render = true
+
+[editor.soft-wrap]
+enable = true
+
+[editor.inline-diagnostics]
+cursor-line = "warning"
+
+[keys.insert.k]
+j = "normal_mode" # Maps `kj` to exit insert mode

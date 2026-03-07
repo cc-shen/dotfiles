@@ -5,9 +5,6 @@ maximize = true
 copy-on-select = clipboard
 shell-integration-features = no-cursor, ssh-terminfo, ssh-env
 
-focus-follows-mouse = true
-scrollback-limit = 100000000
-
 desktop-notifications = false
 quit-after-last-window-closed = true
 window-new-tab-position = end

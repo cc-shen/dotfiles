@@ -6,6 +6,12 @@ Tired of looking up <https://ohmyz.sh/#install> everytime, so the command is jus
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
+Bootstrap shell plugins and tmux TPM after installing oh-my-zsh:
+
+```bash
+zsh ~/dotfiles/scripts/bootstrap-shell.zsh
+```
+
 ## Others
 
 Linking from dotfiles:

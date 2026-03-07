@@ -78,26 +78,6 @@ setup-zsh()
     fi
 }
 
-# Make dirs for neovim
-setup-nvim-dirs()
-{
-    NVIM_META_DIR_PATH=~/.vim
-    NVIM_BACKUP_DIR_PATH=$NVIM_META_DIR_PATH/backup
-    NVIM_SWAP_DIR_PATH=$NVIM_META_DIR_PATH/swap
-    NVIM_UNDO_DIR_PATH=$NVIM_META_DIR_PATH/undo
-    NVIM_DIR_PATHS=($NVIM_META_DIR_PATH $NVIM_BACKUP_DIR_PATH $NVIM_SWAP_DIR_PATH $NVIM_UNDO_DIR_PATH)
-
-    for i in "${NVIM_DIR_PATHS[@]}"
-    do
-        if [[ ! -d $i ]]
-        then
-            mkdir $i
-        else
-            echo "$i already exists"
-        fi
-    done
-}
-
 # Set up tmux plugins
 setup-tpm()
 {
@@ -122,4 +102,4 @@ alias tl='tmux list-sessions'
 
 alias config='/usr/bin/git --git-dir=$HOME/dotfiles/.git --work-tree=$HOME/dotfiles'
 
-echo "Available functions: setup-zsh, setup-tpm, setup-nvim-dirs"
+echo "Available functions: setup-zsh, setup-tpm"

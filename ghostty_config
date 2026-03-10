@@ -5,6 +5,9 @@ maximize = true
 copy-on-select = clipboard
 shell-integration-features = no-cursor, ssh-terminfo, ssh-env
 
+window-inherit-working-directory = false
+tab-inherit-working-directory = false
+
 desktop-notifications = false
 quit-after-last-window-closed = true
 window-new-tab-position = end

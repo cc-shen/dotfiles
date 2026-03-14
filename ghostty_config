@@ -4,6 +4,7 @@ maximize = true
 
 copy-on-select = clipboard
 shell-integration-features = no-cursor, ssh-terminfo, ssh-env
+macos-option-as-alt = left
 
 window-inherit-working-directory = false
 tab-inherit-working-directory = false

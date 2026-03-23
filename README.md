@@ -17,11 +17,11 @@ zsh ~/dotfiles/scripts/bootstrap-shell.zsh
 Linking from dotfiles:
 
 ```bash
-ln -nfs ~/dotfiles/.zshrc ~/.zshrc
+ln -nfs ~/dotfiles/zshrc ~/.zshrc
 
 ln -nfs ~/dotfiles/nvim ~/.config/nvim
 
-ln -nfs ~/dotfiles/.tmux.conf ~/.tmux.conf
+ln -nfs ~/dotfiles/tmux.conf ~/.tmux.conf
 ```
 
 Locating command history:

@@ -1,5 +1,5 @@
 font-family = "JetBrainsMono Nerd Font Mono"
-theme = "Catppuccin Mocha"
+theme = "Gruvbox Dark Hard"
 maximize = true
 
 copy-on-select = clipboard
@@ -8,6 +8,9 @@ macos-option-as-alt = left
 
 window-inherit-working-directory = false
 tab-inherit-working-directory = false
+
+focus-follows-mouse = true
+scrollback-limit = 100000000
 
 desktop-notifications = false
 quit-after-last-window-closed = true
